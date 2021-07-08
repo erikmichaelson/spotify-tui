@@ -274,6 +274,10 @@ pub struct App {
   // input_cursor_position is the sum of the width of characters preceding the cursor.
   // Reason for this complication is due to non-ASCII characters, they may
   // take more than 1 bytes to store and more than 1 character width to display.
+
+  // TAG 1
+  pub add_to_playlist_waiting_tracks: <Option<Vec<String>>,
+
   pub input: Vec<char>,
   pub input_idx: usize,
   pub input_cursor_position: u16,
@@ -596,6 +600,14 @@ impl App {
         self.dispatch(IoEvent::ChangeVolume(next_volume as u8));
       }
     }
+  }
+
+  // TAG 2
+  pub fn change_add_to_playlist_waiting_state(&mut self, uris: <Option<Vec<String>>) {
+	// just start with one and maybe change to a stack?
+	// this whole function will probably be depricated but just 
+	// wanna flesh this out quick
+    self.add_to_playlist_waiting_tracks = uris;
   }
 
   pub fn handle_error(&mut self, e: anyhow::Error) {
@@ -1030,6 +1042,20 @@ impl App {
   }
 
   pub fn user_unfollow_playlist_search_result(&mut self) {
+    if let (Some(playlists), Some(selected_index), Some(user)) = (
+      &self.search_results.playlists,
+      self.search_results.selected_playlists_index,
+      &self.user,
+    ) {
+      let selected_playlist = &playlists.items[selected_index];
+      let selected_id = selected_playlist.id.clone();
+      let user_id = user.id.clone();
+      self.dispatch(IoEvent::UserUnfollowPlaylist(user_id, selected_id))
+    }
+  }
+
+  /* TODO: write this function	*/
+  pub fn user_add_song_to_playlist(&mut self) {
     if let (Some(playlists), Some(selected_index), Some(user)) = (
       &self.search_results.playlists,
       self.search_results.selected_playlists_index,
