@@ -149,6 +149,10 @@ pub fn handler(key: Key, app: &mut App) {
     Key::Char('r') => {
       handle_recommended_tracks(app);
     }
+	// working to connect this
+	Key::Char('y') => {
+	  handle_add_song_to_playlist(app);
+	}
     _ if key == app.user_config.keys.add_item_to_queue => on_queue(app),
     _ => {}
   }
@@ -419,6 +423,59 @@ fn on_enter(app: &mut App) {
             None,
             Some(app.track_table.selected_index + app.made_for_you_offset as usize),
           ));
+        }
+      }
+    },
+    None => {}
+  };
+}
+
+fn handle_add_song_to_playlist(app: &mut App) {
+  let TrackTable {
+    context,
+    selected_index,
+    tracks,
+  } = &app.track_table;
+  // getting the track URI I believe - all reusable except for the IoEvent
+  // easier than I expected lol. just have to mess with IoEvent now
+  match &context {
+    Some(context) => match context {
+      TrackTableContext::MyPlaylists => {
+        if let Some(track) = tracks.get(*selected_index) {
+          let uri = track.uri.clone();
+          app.dispatch(IoEvent::TODO(uri));
+        };
+      }
+      TrackTableContext::RecommendedTracks => {
+        if let Some(full_track) = app.recommended_tracks.get(app.track_table.selected_index) {
+          let uri = full_track.uri.clone();
+          app.dispatch(IoEvent::TODO(uri));
+        }
+      }
+      TrackTableContext::SavedTracks => {
+        if let Some(page) = app.library.saved_tracks.get_results(None) {
+          if let Some(saved_track) = page.items.get(app.track_table.selected_index) {
+            let uri = saved_track.track.uri.clone();
+            app.dispatch(IoEvent::TODO(uri));
+          }
+        }
+      }
+      TrackTableContext::AlbumSearch => {}
+      TrackTableContext::PlaylistSearch => {
+        let TrackTable {
+          selected_index,
+          tracks,
+          ..
+        } = &app.track_table;
+        if let Some(track) = tracks.get(*selected_index) {
+          let uri = track.uri.clone();
+          app.dispatch(IoEvent::TODO(uri));
+        };
+      }
+      TrackTableContext::MadeForYou => {
+        if let Some(track) = tracks.get(*selected_index) {
+          let uri = track.uri.clone();
+          app.dispatch(IoEvent::TODO(uri));
         }
       }
     },
