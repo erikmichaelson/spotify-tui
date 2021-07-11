@@ -276,7 +276,7 @@ pub struct App {
   // take more than 1 bytes to store and more than 1 character width to display.
 
   // TAG 1
-  pub add_to_playlist_waiting_tracks: <Option<Vec<String>>,
+  pub add_to_playlist_waiting_tracks: Option<Vec<String>>,
 
   pub input: Vec<char>,
   pub input_idx: usize,
@@ -414,6 +414,9 @@ impl Default for App {
       spotify_token_expiry: SystemTime::now(),
       dialog: None,
       confirm: false,
+
+	  // TAG 3
+	  add_to_playlist_waiting_tracks: None,
     }
   }
 }
@@ -603,7 +606,7 @@ impl App {
   }
 
   // TAG 2
-  pub fn change_add_to_playlist_waiting_state(&mut self, uris: <Option<Vec<String>>) {
+  pub fn change_add_to_playlist_waiting_state(&mut self, uris: Option<Vec<String>>) {
 	// just start with one and maybe change to a stack?
 	// this whole function will probably be depricated but just 
 	// wanna flesh this out quick

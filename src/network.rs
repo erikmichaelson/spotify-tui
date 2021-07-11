@@ -64,8 +64,8 @@ pub enum IoEvent {
   CurrentUserSavedAlbumDelete(String),
   CurrentUserSavedAlbumAdd(String),
   // TAG 1
-  CurrentUserPlaylistAddTracks(String),
-  ChangeAddToPlaylistWaitingState(String),
+  UserPlaylistAddTracks(String, String, Option<Vec<String>>),
+  ChangeAddToPlaylistWaitingState(Option<Vec<String>>),
 
   UserUnfollowArtists(Vec<String>),
   UserFollowArtists(Vec<String>),
@@ -229,11 +229,11 @@ impl<'a> Network<'a> {
       }
 
 	  // TAG 2
-      IoEvent::CurrentUserPlaylistAddTracks(playlist_id, uris) => {
-        self.current_user_playlist_add_tracks(playlist_id, uris).await;
+      IoEvent::UserPlaylistAddTracks(user_id, playlist_id, uris) => {
+        self.user_playlist_add_tracks(user_id, playlist_id, uris).await;
       }
       IoEvent::ChangeAddToPlaylistWaitingState(uris) => {
-        self.current_user_saved_album_add(uris).await;
+        self.change_add_to_playlist_waiting_state(uris).await;
       }
 
       IoEvent::UserUnfollowArtists(artist_ids) => {
@@ -1374,14 +1374,23 @@ impl<'a> Network<'a> {
   }
 
   // TAG 3
-  async fn current_user_playlist_add_tracks(
+  async fn user_playlist_add_tracks(
   	&mut self,
+	user_id: String,
 	playlist_id: String,
     uris: Option<Vec<String>>
   ) {
+	let new_uris = uris.unwrap_or_default();
+	
 	// need better error handling
-  	if(uris == None) { return; }
-    match self.spotify.current_user_playlist_add_tracks(playlist_id, &uris).await {
+    match self
+		.spotify
+		.user_playlist_add_tracks(
+			&user_id, 
+			&playlist_id, 
+			&new_uris, 
+			None)
+	.await {
       Ok(result) => {
         let mut app = self.app.lock().await;
 	  	println!("It worked");
@@ -1398,9 +1407,6 @@ impl<'a> Network<'a> {
   ) {
     let mut app = self.app.lock().await;
     app.change_add_to_playlist_waiting_state(uris);
-  }
-
-  async fn current_user_saved_album_add(&mut self, track_id) {
   }
 
   async fn get_recently_played(&mut self) {
