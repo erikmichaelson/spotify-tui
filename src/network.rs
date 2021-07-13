@@ -1392,7 +1392,7 @@ impl<'a> Network<'a> {
 			None)
 	.await {
       Ok(result) => {
-        let mut app = self.app.lock().await;
+        let app = self.app.lock().await;
 	  	println!("It worked");
       }
       Err(e) => {
@@ -1406,7 +1406,8 @@ impl<'a> Network<'a> {
 	uris: Option<Vec<String>>,
   ) {
     let mut app = self.app.lock().await;
-    app.change_add_to_playlist_waiting_state(uris);
+    app.add_to_playlist_waiting_tracks = uris;
+    app.push_navigation_stack(RouteId::TrackTable, ActiveBlock::MyPlaylists);
   }
 
   async fn get_recently_played(&mut self) {

@@ -1758,6 +1758,11 @@ fn draw_table<B>(
   let selected_style =
     get_color(highlight_state, app.user_config.theme).add_modifier(Modifier::BOLD);
 
+  let copying_style =
+    get_color(highlight_state, app.user_config.theme)
+		.bg(app.user_config.theme.copying)
+		.add_modifier(Modifier::BOLD);
+
   let track_playing_index = app.current_playback_context.to_owned().and_then(|ctx| {
     ctx.item.and_then(|item| match item {
       PlayingItem::Track(track) => items
@@ -1826,7 +1831,11 @@ fn draw_table<B>(
     // Next check if the item is under selection.
     if Some(i) == selected_index.checked_sub(offset) {
       style = selected_style;
-    }
+	  // the selection stays the same and the cursor moves TODO
+	  if app.add_to_playlist_waiting_tracks.is_some() {
+	  	style = copying_style;
+	  }
+	}
 
     // Return row styled data
     Row::new(formatted_row).style(style)

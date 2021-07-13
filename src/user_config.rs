@@ -27,6 +27,8 @@ pub struct UserTheme {
   pub selected: Option<String>,
   pub text: Option<String>,
   pub header: Option<String>,
+  // TAG 1
+  pub copying: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -47,6 +49,8 @@ pub struct Theme {
   pub selected: Color,
   pub text: Color,
   pub header: Color,
+  // TAG 2
+  pub copying: Color,
 }
 
 impl Default for Theme {
@@ -68,6 +72,8 @@ impl Default for Theme {
       selected: Color::LightCyan,
       text: Color::Reset,
       header: Color::Reset,
+	  // TAG 3
+      copying: Color::White,
     }
   }
 }
@@ -392,6 +398,8 @@ impl UserConfig {
     to_theme_item!(selected);
     to_theme_item!(text);
     to_theme_item!(header);
+	// TAG 4
+    to_theme_item!(copying);
     Ok(())
   }
 

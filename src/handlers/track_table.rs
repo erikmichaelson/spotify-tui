@@ -431,6 +431,7 @@ fn on_enter(app: &mut App) {
   };
 }
 
+// TAG 2
 fn handle_add_song_to_playlist(app: &mut App) {
   let TrackTable {
     context,
@@ -439,6 +440,7 @@ fn handle_add_song_to_playlist(app: &mut App) {
   } = &app.track_table;
   // getting the track URI I believe - all reusable except for the IoEvent
   // easier than I expected lol. just have to mess with IoEvent now
+  //let app.track_table.selected_index;
   match &context {
     Some(context) => match context {
       TrackTableContext::MyPlaylists => {
@@ -471,8 +473,8 @@ fn handle_add_song_to_playlist(app: &mut App) {
 			  Some(id) => Some(vec![id.to_string()]),
 		  	  None => None,
 		    };
-		    app.add_to_playlist_waiting_tracks = uris;
-            //app.dispatch(IoEvent::TODO(uri));
+		    //app.add_to_playlist_waiting_tracks = uris;
+          	app.dispatch(IoEvent::ChangeAddToPlaylistWaitingState(uris));
           }
         }
       }
