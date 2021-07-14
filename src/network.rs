@@ -64,7 +64,7 @@ pub enum IoEvent {
   CurrentUserSavedAlbumDelete(String),
   CurrentUserSavedAlbumAdd(String),
   // TAG 1
-  UserPlaylistAddTracks(String, String, Option<Vec<String>>),
+  UserPlaylistAddTracks(String, String, Vec<String>),
   ChangeAddToPlaylistWaitingState(Option<Vec<String>>),
 
   UserUnfollowArtists(Vec<String>),
@@ -1378,27 +1378,29 @@ impl<'a> Network<'a> {
   	&mut self,
 	user_id: String,
 	playlist_id: String,
-    uris: Option<Vec<String>>
+    uris: Vec<String>
   ) {
-	let new_uris = uris.unwrap_or_default();
-	
+	let mut app = self.app.lock().await;
+	app.dispatch(IoEvent::StartPlayback(
+		None,
+		None,
+		None));
 	// need better error handling
-    match self
+	match self
 		.spotify
 		.user_playlist_add_tracks(
-			&user_id, 
+			&user_id,
 			&playlist_id, 
-			&new_uris, 
+			&uris, 
 			None)
 	.await {
-      Ok(result) => {
-        let app = self.app.lock().await;
-	  	println!("It worked");
-      }
-      Err(e) => {
-        self.handle_error(anyhow!(e)).await;
-      }
-    }
+	  Ok(result) => {
+	  	println!("blob");
+	  }
+	  Err(e) => {
+		self.handle_error(anyhow!(e)).await;
+	  }
+	}
   }
 
   async fn change_add_to_playlist_waiting_state(

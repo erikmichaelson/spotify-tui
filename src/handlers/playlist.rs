@@ -68,12 +68,13 @@ pub fn handler(key: Key, app: &mut App) {
         if let Some(selected_playlist) = playlists.items.get(selected_playlist_index.to_owned()) {
         let playlist_id = selected_playlist.id.to_owned();
 		// TAG 1
-		if let (Some(add_to_playlist_waiting_tracks)) =
-			&app.add_to_playlist_waiting_tracks
+		if let Some(add_to_playlist_waiting_tracks) =
+			app.add_to_playlist_waiting_tracks.clone()
 		{
-			app.dispatch(IoEvent::UserPlaylistAddTracks(
-				playlist_id,
-				uris,
+			app.user_playlist_add_tracks(
+				playlist_id.clone(),
+				add_to_playlist_waiting_tracks.to_owned());
+		}
 		// END
 
           app.dispatch(IoEvent::GetPlaylistTracks(playlist_id, app.playlist_offset));
