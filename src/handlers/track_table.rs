@@ -445,35 +445,29 @@ fn handle_add_song_to_playlist(app: &mut App) {
     Some(context) => match context {
       TrackTableContext::MyPlaylists => {
         if let Some(track) = tracks.get(*selected_index) {
-          //let uri = track.uri.clone();
 		  let uris: Option<Vec<String>> = match &track.id {
 			  Some(id) => Some(vec![id.to_string()]),
 			  None => None,
 		  };
-		  app.add_to_playlist_waiting_tracks = uris;
-//          app.dispatch(IoEvent::ChangeAddToPlaylistWaitingState(uris));
+          app.dispatch(IoEvent::ChangeAddToPlaylistWaitingState(uris));
         };
       }
       TrackTableContext::RecommendedTracks => {
         if let Some(full_track) = app.recommended_tracks.get(app.track_table.selected_index) {
-          //let uri = full_track.uri.clone();
 		  let uris: Option<Vec<String>> = match &full_track.id {
 			  Some(id) => Some(vec![id.to_string()]),
 			  None => None,
 		  };
-		  app.add_to_playlist_waiting_tracks = uris;
-          //app.dispatch(IoEvent::TODO(uri));
+          app.dispatch(IoEvent::ChangeAddToPlaylistWaitingState(uris));
         }
       }
       TrackTableContext::SavedTracks => {
         if let Some(page) = app.library.saved_tracks.get_results(None) {
           if let Some(saved_track) = page.items.get(app.track_table.selected_index) {
-            //let uri = saved_track.track.uri.clone();
 		    let uris: Option<Vec<String>> = match &saved_track.track.id {
 			  Some(id) => Some(vec![id.to_string()]),
 		  	  None => None,
 		    };
-		    //app.add_to_playlist_waiting_tracks = uris;
           	app.dispatch(IoEvent::ChangeAddToPlaylistWaitingState(uris));
           }
         }
@@ -486,24 +480,20 @@ fn handle_add_song_to_playlist(app: &mut App) {
           ..
         } = &app.track_table;
         if let Some(track) = tracks.get(*selected_index) {
-          //let uri = track.uri.clone();
 		  let uris: Option<Vec<String>> = match &track.id {
 			  Some(id) => Some(vec![id.to_string()]),
 			  None => None,
 		  };
-		  app.add_to_playlist_waiting_tracks = uris;
-          //app.dispatch(IoEvent::TODO(uri));
+          app.dispatch(IoEvent::ChangeAddToPlaylistWaitingState(uris));
         };
       }
       TrackTableContext::MadeForYou => {
         if let Some(track) = tracks.get(*selected_index) {
-          //let uri = track.uri.clone();
 		  let uris: Option<Vec<String>> = match &track.id {
 			  Some(id) => Some(vec![id.to_string()]),
 			  None => None,
 		  };
-		  app.add_to_playlist_waiting_tracks = uris;
-          //app.dispatch(IoEvent::TODO(uri));
+          app.dispatch(IoEvent::ChangeAddToPlaylistWaitingState(uris));
         }
       }
     },

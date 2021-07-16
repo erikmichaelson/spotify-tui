@@ -1063,15 +1063,10 @@ impl App {
 	playlist_id: String, 
 	uris: Vec<String>
   ) {
-    if let (Some(playlists), Some(selected_index), Some(user)) = (
-      &self.search_results.playlists,
-      self.search_results.selected_playlists_index,
-      &self.user,
-    ) {
-      let selected_playlist = &playlists.items[selected_index];
-      let selected_id = selected_playlist.id.clone();
+    if let Some(user) = &self.user {
       let user_id = user.id.clone();
-      self.dispatch(IoEvent::UserPlaylistAddTracks(user_id, selected_id, uris))
+      self.dispatch(IoEvent::UserPlaylistAddTracks(user_id, playlist_id, uris));
+	  self.add_to_playlist_waiting_tracks = None;
     }
   }
 

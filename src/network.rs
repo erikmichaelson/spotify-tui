@@ -1381,10 +1381,6 @@ impl<'a> Network<'a> {
     uris: Vec<String>
   ) {
 	let mut app = self.app.lock().await;
-	app.dispatch(IoEvent::StartPlayback(
-		None,
-		None,
-		None));
 	// need better error handling
 	match self
 		.spotify
@@ -1394,9 +1390,7 @@ impl<'a> Network<'a> {
 			&uris, 
 			None)
 	.await {
-	  Ok(result) => {
-	  	println!("blob");
-	  }
+	  Ok(result) => {}
 	  Err(e) => {
 		self.handle_error(anyhow!(e)).await;
 	  }
